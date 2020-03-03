@@ -4,16 +4,36 @@ var queryUrl = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_da
 
 // Perform an call to the queryUrl 
 d3.json(queryUrl,function(response){
-    console.log(response)
+    console.log(response.features)
     // send data 
     createFeatures(response.features)
 })
+
 function createFeatures (earthquakeData) {
+
     function onEachFeature(feature, layer) {
         layer.bindPopup("<h3>" + feature.properties.place +
           "</h3><hr><p>" + new Date(feature.properties.time) + "</p>");
     }
+   
+    var earthquakeMarker = L.circle(feature.geometry, {
+      fillOpacity: 0.75,
+      color: "white",
+      fillColor: "purple",
+      radius: feature.properties.mag * 10000         
+    })
+
     var earthquakes = L.geoJSON(earthquakeData, {
+        style: function(feature) {
+          return {
+            shape:"circle",
+            color: "white",
+            // Call the chooseColor function to decide which color to color our neighborhood (color based on borough)
+            fillColor: chooseColor(feature.properties.borough),
+            fillOpacity: 0.5,
+            weight: 1.5
+          };
+        marker: 
         onEachFeature: onEachFeature
       });
       createMap(earthquakes);
@@ -34,7 +54,7 @@ function createMap(earthquakes) {
     });
     // Define a baseMaps object to hold our base layers
     var baseMaps = {
-      "Street Map": streetmap,
+      "Ligth Map": streetmap,
       "Dark Map": darkmap
     };
     // Create overlay object to hold our overlay layer
@@ -46,7 +66,7 @@ function createMap(earthquakes) {
       center: [
         37.09, -95.71
       ],
-      zoom: 5,
+      zoom: 2,
       layers: [streetmap, earthquakes]
     });
     // Create a layer control

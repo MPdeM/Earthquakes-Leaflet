@@ -2,17 +2,18 @@
 // Funtion to scale the marker size
 function  markerSize (mag) {
   return mag*50000;
-}
-function chooseColor (mag) {
+};
+function chooseColor(mag) {
   console.log(mag)
     var color = "";
-    if (mag < 1) {color = "rgb(0, 230, 0)"}
-    else if (mag < 2) { color ="green" }// "rgb(204, 255, 102)"}
+    if (mag < 1) {color = "lightgreen"}
+    else if (mag < 2) { color ="yellowgreen" }// "rgb(204, 255, 102)"}
     else if (mag < 3) { color = "rgb(255, 255, 102)"}
     else if (mag < 4) { color = "rgb(255, 153, 51)"}
     else if (mag < 5) { color = "rgb(255, 102, 0)"}
-    else {color = "rgb(255, 0, 0)"}
-  }
+    else {color = "red"}
+  };
+
   var queryUrl = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson";
   
   // Perform an call to the queryUrl 
@@ -26,16 +27,16 @@ function chooseColor (mag) {
         onEachFeature : function (feature, layer) {
           layer.bindPopup("<h3>" + feature.properties.place +
             "</h3><hr><p>" + new Date(feature.properties.time) + "</p>");
-        }
+        },
         pointToLayer: function (feature, latlgn ) {
             return new L.circle( latlgn , {
-              radius : markerSize(feature.properties.mag),
+              radius : markerSize (feature.properties.mag),
               fillColor: chooseColor(feature.properties.mag),
               fillOpacity: 0.4,
-              color: "black",
+              color: chooseColor(feature.properties.mag),
               weight: .8
             })      
-          },
+          }
         
       })
       createMap(earthquakes);

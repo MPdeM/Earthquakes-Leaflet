@@ -1,11 +1,11 @@
 // Funtion to scale the marker size
 function  markerSize (mag) {
-  return mag*50000;
+  return mag*100000;
 }
 // Funtion to scale the color
 function chooseColor (mag) {
   var color = "";
-  if (mag < 1) {color = "rgb(0, 230, 0)"}
+  if (mag < 1) {color = "ligthgreen"}
   else if (mag < 2) { color = "rgb(204, 255, 102)"}
   else if (mag < 3) { color = "rgb(255, 255, 102)"}
   else if (mag < 4) { color = "rgb(255, 153, 51)"}
@@ -28,7 +28,17 @@ function createfeatures (earthquakeData) {
   for (var i=0; i < earthquakeData.length; i++){
     var lat= earthquakeData[i].geometry.coordinates[1];
     var lon= earthquakeData[i].geometry.coordinates[0];
-    console.log(earthquakeData[i].properties.mag)
+    var mag= earthquakeData[i].properties.mag;
+
+    
+      var color = "";
+      if (mag < 1) {color = "pink"}
+      else if (mag < 2) { color = "rgb(204, 255, 102)"}
+      else if (mag < 3) { color = "rgb(255, 255, 102)"}
+      else if (mag < 4) { color = "rgb(255, 153, 51)"}
+      else if (mag < 5) { color = "rgb(255, 102, 0)"}
+      else {color = "rgb(255, 0, 0)"}
+    
     
     // Set the marker size and color proportional to the magnitude
     earthqMarkers.push(
@@ -36,9 +46,9 @@ function createfeatures (earthquakeData) {
         stroke: false,
         fillOpacity: 0.75,
         
-        color: chooseColor (parseInt(earthquakeData[i].properties.mag)),
-        fillColor: chooseColor (parseInt(earthquakeData[i].properties.mag)),
-        radius: (earthquakeData[i].properties.mag*50000)
+        color: "white",
+        fillColor: color,
+        radius: markerSize(earthquakeData[i].properties.mag)
       })
     );
     

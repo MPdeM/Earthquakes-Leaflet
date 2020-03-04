@@ -1,8 +1,13 @@
 // Store the API in a queryUrl
+// Funtion to scale the marker size
+function  markerSize (mag) {
+  return mag*50000;
+}
 function chooseColor (mag) {
+  console.log(mag)
     var color = "";
     if (mag < 1) {color = "rgb(0, 230, 0)"}
-    else if (mag < 2) { color = "rgb(204, 255, 102)"}
+    else if (mag < 2) { color ="green" }// "rgb(204, 255, 102)"}
     else if (mag < 3) { color = "rgb(255, 255, 102)"}
     else if (mag < 4) { color = "rgb(255, 153, 51)"}
     else if (mag < 5) { color = "rgb(255, 102, 0)"}
@@ -12,38 +17,28 @@ function chooseColor (mag) {
   
   // Perform an call to the queryUrl 
   d3.json(queryUrl,function(response){
-      
       // send data 
       createFeatures(response.features)
-  })
+  });
   
   function createFeatures (earthquakeData) {
-      function onEachFeature(feature, layer) {
+      var earthquakes = L.geoJSON(earthquakeData, {   
+        onEachFeature : function (feature, layer) {
           layer.bindPopup("<h3>" + feature.properties.place +
             "</h3><hr><p>" + new Date(feature.properties.time) + "</p>");
-      }
-      // var earthquakeMarker = L.circle(feature.geometry, {
-      //   fillOpacity: 0.75,
-      //   color: "white",
-      //   fillColor: "purple",
-      //   radius: feature.properties.mag * 10000         
-      // })
-      var earthquakes = L.geoJSON(earthquakeData, {   
-        style: function(feature) {
-            return {
-              // shape:"circle",
-              color: "white",
-              // Call the chooseColor function to decide which color to color 
+        }
+        pointToLayer: function (feature, latlgn ) {
+            return new L.circle( latlgn , {
+              radius : markerSize(feature.properties.mag),
               fillColor: chooseColor(feature.properties.mag),
-              fillOpacity: 0.5,
-              weight: 1.5
-            };
+              fillOpacity: 0.4,
+              color: "black",
+              weight: .8
+            })      
           },
-          onEachFeature: function (feature, layer) {
-            layer.bindPopup("<h3>" + feature.properties.place +
-              "</h3><hr><p>" + new Date(feature.properties.time) + "</p>");onEachFeature
-        });
-        createMap(earthquakes);
+        
+      })
+      createMap(earthquakes);
   }
   
   function createMap(earthquakes) {

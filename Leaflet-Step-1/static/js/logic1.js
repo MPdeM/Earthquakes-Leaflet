@@ -1,17 +1,16 @@
 // Store the API in a queryUrl
 // Funtion to scale the marker size
 function  markerSize (mag) {
-  return mag*50000;
+  return mag*mag*50000;
 };
 function chooseColor(mag) {
-  console.log(mag)
-    var color = "";
-    if (mag < 1) {color = "lightgreen"}
-    else if (mag < 2) { color ="yellowgreen" }// "rgb(204, 255, 102)"}
-    else if (mag < 3) { color = "rgb(255, 255, 102)"}
-    else if (mag < 4) { color = "rgb(255, 153, 51)"}
-    else if (mag < 5) { color = "rgb(255, 102, 0)"}
-    else {color = "red"}
+  var color = "";
+  if (mag < 1) {return "rgb(0, 255, 0)"}
+  else if (mag < 2) { return "rgb(128, 255, 0)"}
+  else if (mag < 3) { return "rgb(255, 128, 0)"}
+  else if (mag < 4) { return "rgb(255, 128, 50)"}
+  else if (mag < 5) { return "rgb(255, 0, 152)"}
+  else {return "rgb(152, 0, 152)"}
   };
 
   var queryUrl = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson";
@@ -25,21 +24,22 @@ function chooseColor(mag) {
   function createFeatures (earthquakeData) {
       var earthquakes = L.geoJSON(earthquakeData, {   
         onEachFeature : function (feature, layer) {
-          layer.bindPopup("<h3>" + feature.properties.place +
-            "</h3><hr><p>" + new Date(feature.properties.time) + "</p>");
+          layer.bindPopup("<h3>" + feature.properties.place + "</h3><hr><p>" 
+          + new Date(feature.properties.time) + "</p>");
         },
         pointToLayer: function (feature, latlgn ) {
             return new L.circle( latlgn , {
-              radius : markerSize (feature.properties.mag),
+              stroke: true,
+              fillOpacity: 0.5,
+              weight: 0.5,
+              color: "white",
               fillColor: chooseColor(feature.properties.mag),
-              fillOpacity: 0.4,
-              color: chooseColor(feature.properties.mag),
-              weight: .8
+              radius: markerSize(feature.properties.mag)
             })      
           }
-        
       })
       createMap(earthquakes);
+
   }
   
   function createMap(earthquakes) {
@@ -58,8 +58,9 @@ function chooseColor(mag) {
       });
       // Define a baseMaps object to hold our base layers
       var baseMaps = {
-        "Ligth Map": streetmap,
-        "Dark Map": darkmap
+
+        "Dark Map": darkmap,
+        "Ligth Map": streetmap
       };
       // Create overlay object to hold our overlay layer
       var overlayMaps = {
@@ -71,7 +72,7 @@ function chooseColor(mag) {
           37.09, -95.71
         ],
         zoom: 2,
-        layers: [streetmap, earthquakes]
+        layers: [darkmap, earthquakes]
       });
       // Create a layer control
       // Pass in our baseMaps and overlayMaps
@@ -79,4 +80,29 @@ function chooseColor(mag) {
       L.control.layers(baseMaps, overlayMaps, {
         collapsed: false
       }).addTo(myMap);
+
+    // Set up the legend
+    var legend = L.control({ position: "bottomright" });
+    legend.onAdd = function() {
+      var div = L.DomUtil.create("div", 'info legend');
+      var colors = ["rgb(0, 255, 0)","rgb(128, 255, 0)", "rgb(255, 128, 0)", "rgb(255, 128, 50)", "rgb(255, 0, 152)", "rgb(152, 0, 152)"];
+      var limits = [0,1,2,3,4,5];
+     
+      // loop through our intervals and generate a label
+      //with a colored square for each interval
+       // var legendInfo = "<h1> Earthquake Magnitude</h1>" 
+  
+      // div.innerHTML = legendInfo;
+      console.log(limits)
+      for (var i = 0; i < colors.length; i++) {
+        div.innerHTML +=
+        '<i style="background:' + colors[i] + '"></i> ' +
+            limits[i] + (limits[i + 1] ? '&ndash;' + limits[i + 1] + '<br>' : '+');
+            }
+        // div.innerHTML += "<ul>" + labels.join("") + "</ul>";
+    return div;
+  };
+
+  // Adding legend to the map
+  legend.addTo(myMap);
     }

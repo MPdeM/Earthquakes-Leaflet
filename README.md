@@ -1,11 +1,11 @@
-# Earthquakes-Leaflet
+# Earthquakes-Leaflet: Visualization of Earthquake data 
 Earthquake-distribution using Leaflet
 
 This project retrieves earthquake data available from the United States Geological Survey, USGS. 
 The data can be found on " https://earthquake.usgs.gov/earthquakes/feed/v1.0/geojson.php" 
 
 
-# Tools used: 
+## Tools used: 
 The main code is written in a JavaScript file static/js/logic.js. The code uses MapBox*. 
 The data, in GeoJSON format, is retrieved from API using D3. The plots and interactive visualizations use Leaflet.js library . Finally the data is deployed with index.html. 
 
